@@ -11,8 +11,8 @@ const createBannerSchema = z.object({
   body: z.object({
     image: z.string().url('Invalid image URL'),
     title: z.string().min(1).optional(),
-    subtitle: z.string().optional(),
-    linkUrl: z.string().url('Invalid link URL').optional(),
+    subtitle: z.string().nullable().optional(),
+    linkUrl: z.string().url('Invalid link URL').nullable().optional(),
     isActive: z.boolean().optional(),
     position: z.number().int().min(0).optional(),
     startDate: z.string().datetime().optional(),
@@ -24,8 +24,8 @@ const updateBannerSchema = z.object({
   body: z.object({
     image: z.string().url('Invalid image URL').optional(),
     title: z.string().min(1).optional(),
-    subtitle: z.string().optional(),
-    linkUrl: z.string().url('Invalid link URL').optional(),
+    subtitle: z.string().nullable().optional(),
+    linkUrl: z.string().url('Invalid link URL').nullable().optional(),
     isActive: z.boolean().optional(),
     position: z.number().int().min(0).optional(),
     startDate: z.string().datetime().optional(),
