@@ -84,6 +84,7 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/vouchers', vouchersRoutes);
 app.use('/api/banners', bannersRoutes);
+app.use('/api/admin/banners', bannersRoutes);
 app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 5000;

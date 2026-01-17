@@ -7,7 +7,6 @@ import Banner from '../models/Banner.js';
 
 const router = express.Router();
 
-// Validation schema for creating a banner
 const createBannerSchema = z.object({
   body: z.object({
     image: z.string().url('Invalid image URL'),
@@ -21,7 +20,19 @@ const createBannerSchema = z.object({
   }),
 });
 
-// Public: get active banners for home screen
+const updateBannerSchema = z.object({
+  body: z.object({
+    image: z.string().url('Invalid image URL').optional(),
+    title: z.string().min(1).optional(),
+    subtitle: z.string().optional(),
+    linkUrl: z.string().url('Invalid link URL').optional(),
+    isActive: z.boolean().optional(),
+    position: z.number().int().min(0).optional(),
+    startDate: z.string().datetime().optional(),
+    endDate: z.string().datetime().optional(),
+  }),
+});
+
 router.get('/', async (req, res) => {
   try {
     const now = new Date();
@@ -55,7 +66,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Admin: create a new banner
 router.post('/', protect, admin, validate(createBannerSchema), async (req, res) => {
   try {
     const {
@@ -87,5 +97,47 @@ router.post('/', protect, admin, validate(createBannerSchema), async (req, res) 
   }
 });
 
-export default router;
+router.put('/:id', protect, admin, validate(updateBannerSchema), async (req, res) => {
+  try {
+    const updateData = { ...req.body };
 
+    if (updateData.startDate) {
+      updateData.startDate = new Date(updateData.startDate);
+    }
+
+    if (updateData.endDate) {
+      updateData.endDate = new Date(updateData.endDate);
+    }
+
+    const banner = await Banner.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!banner) {
+      return res.status(404).json({ message: 'Banner not found' });
+    }
+
+    res.json(banner);
+  } catch (error) {
+    console.error('Update banner error:', error);
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+});
+
+router.delete('/:id', protect, admin, async (req, res) => {
+  try {
+    const banner = await Banner.findByIdAndDelete(req.params.id);
+
+    if (!banner) {
+      return res.status(404).json({ message: 'Banner not found' });
+    }
+
+    res.json({ message: 'Banner deleted successfully' });
+  } catch (error) {
+    console.error('Delete banner error:', error);
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+});
+
+export default router;
