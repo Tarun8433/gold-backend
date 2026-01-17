@@ -21,6 +21,7 @@ import addressesRoutes from './routes/addresses.js';
 import notificationsRoutes from './routes/notifications.js';
 import paymentRoutes from './routes/payment.js';
 import vouchersRoutes from './routes/vouchers.js';
+import bannersRoutes from './routes/banners.js';
 import adminRoutes from './routes/admin.js';
 
 // Replicate __dirname
@@ -82,6 +83,7 @@ app.use('/api/addresses', addressesRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/vouchers', vouchersRoutes);
+app.use('/api/banners', bannersRoutes);
 app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 5000;
