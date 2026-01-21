@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tax Invoice</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 12px;
+      color: #333;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .invoice-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Header Section */
+    .invoice-header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff;
+      padding: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .company-info h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #d4af37;
+      margin-bottom: 8px;
+    }
+
+    .company-info p {
+      font-size: 11px;
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    .invoice-title {
+      text-align: right;
+    }
+
+    .invoice-title h2 {
+      font-size: 32px;
+      font-weight: 300;
+      letter-spacing: 4px;
+      margin-bottom: 10px;
+    }
+
+    .invoice-title .invoice-number {
+      background: #d4af37;
+      color: #1a1a2e;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 14px;
+      display: inline-block;
+    }
+
+    /* Info Section */
+    .invoice-info {
+      display: flex;
+      padding: 25px 30px;
+      background: #fafafa;
+      border-bottom: 1px solid #eee;
+    }
+
+    .info-block {
+      flex: 1;
+    }
+
+    .info-block:last-child {
+      text-align: right;
+    }
+
+    .info-block h4 {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .info-block p {
+      line-height: 1.7;
+      color: #444;
+    }
+
+    .info-block .highlight {
+      font-weight: 600;
+      color: #1a1a2e;
+      font-size: 13px;
+    }
+
+    /* Items Table */
+    .invoice-items {
+      padding: 0 30px;
+    }
+
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    .items-table thead {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    .items-table th {
+      padding: 12px 15px;
+      text-align: left;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .items-table th:last-child,
+    .items-table th.text-right {
+      text-align: right;
+    }
+
+    .items-table th.text-center {
+      text-align: center;
+    }
+
+    .items-table td {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+    }
+
+    .items-table td:last-child {
+      text-align: right;
+    }
+
+    .items-table td.text-center {
+      text-align: center;
+    }
+
+    .items-table td.text-right {
+      text-align: right;
+    }
+
+    .item-name {
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    .item-desc {
+      font-size: 11px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .items-table tbody tr:hover {
+      background: #fafafa;
+    }
+
+    /* Summary Section */
+    .invoice-summary {
+      display: flex;
+      padding: 20px 30px;
+      background: #fafafa;
+    }
+
+    .summary-notes {
+      flex: 1;
+      padding-right: 30px;
+    }
+
+    .summary-notes h4 {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .summary-notes p {
+      font-size: 11px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .summary-totals {
+      width: 280px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .summary-row.subtotal {
+      border-bottom: none;
+      padding-top: 12px;
+    }
+
+    .summary-row .label {
+      color: #666;
+    }
+
+    .summary-row .value {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .summary-row.tax-row {
+      font-size: 11px;
+    }
+
+    .summary-row.tax-row .label {
+      padding-left: 10px;
+    }
+
+    .summary-row.total {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 15px;
+      margin: 15px -15px -15px;
+      border-bottom: none;
+    }
+
+    .summary-row.total .label {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .summary-row.total .value {
+      color: #d4af37;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    /* Amount in Words */
+    .amount-words {
+      padding: 15px 30px;
+      background: #fff8e7;
+      border-left: 4px solid #d4af37;
+      margin: 0 30px 20px;
+    }
+
+    .amount-words span {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+    }
+
+    .amount-words p {
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-top: 4px;
+    }
+
+    /* Footer */
+    .invoice-footer {
+      padding: 25px 30px;
+      display: flex;
+      justify-content: space-between;
+      border-top: 2px solid #1a1a2e;
+    }
+
+    .payment-info h4,
+    .signature h4 {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .payment-info p {
+      font-size: 11px;
+      color: #444;
+      line-height: 1.8;
+    }
+
+    .signature {
+      text-align: right;
+    }
+
+    .signature-line {
+      width: 180px;
+      height: 60px;
+      border-bottom: 1px solid #333;
+      margin-left: auto;
+      margin-bottom: 8px;
+    }
+
+    .signature p {
+      font-size: 11px;
+      color: #666;
+    }
+
+    /* Terms */
+    .invoice-terms {
+      padding: 20px 30px;
+      background: #fafafa;
+      border-top: 1px solid #eee;
+    }
+
+    .invoice-terms h4 {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .invoice-terms ol {
+      padding-left: 15px;
+      font-size: 10px;
+      color: #666;
+      line-height: 1.8;
+    }
+
+    /* Watermark for copies */
+    .copy-type {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      font-size: 80px;
+      font-weight: 700;
+      color: rgba(0,0,0,0.03);
+      pointer-events: none;
+      text-transform: uppercase;
+      letter-spacing: 20px;
+    }
+
+    /* GST Summary Box */
+    .gst-summary {
+      margin: 20px 30px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .gst-summary-header {
+      background: #f5f5f5;
+      padding: 10px 15px;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .gst-summary-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .gst-summary-table th,
+    .gst-summary-table td {
+      padding: 10px 15px;
+      text-align: right;
+      font-size: 11px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .gst-summary-table th {
+      background: #fafafa;
+      font-weight: 600;
+      color: #666;
+      text-transform: uppercase;
+      font-size: 10px;
+    }
+
+    .gst-summary-table th:first-child,
+    .gst-summary-table td:first-child {
+      text-align: left;
+    }
+
+    .gst-summary-table tfoot td {
+      font-weight: 600;
+      background: #fafafa;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+    }
+
+    .badge-paid {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .badge-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+
+      .invoice-container {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice-container">
+    <!-- Header -->
+    <div class="invoice-header">
+      <div class="company-info">
+        <h1>GOLD JEWELLERS</h1>
+        <p>
+          123, Jewellery Market, MG Road<br>
+          Mumbai, Maharashtra - 400001<br>
+          Phone: +91 98765 43210<br>
+          Email: info@goldjewellers.com<br>
+          <strong>GSTIN: 27AABCU9603R1ZM</strong>
+        </p>
+      </div>
+      <div class="invoice-title">
+        <h2>TAX INVOICE</h2>
+        <div class="invoice-number">INV-2026-00142</div>
+      </div>
+    </div>
+
+    <!-- Invoice Info -->
+    <div class="invoice-info">
+      <div class="info-block">
+        <h4>Bill To</h4>
+        <p class="highlight">Rajesh Kumar</p>
+        <p>
+          45, Green Park Colony<br>
+          New Delhi - 110016<br>
+          Phone: +91 99887 76655<br>
+          GSTIN: 07AAACR5055K1Z5
+        </p>
+      </div>
+      <div class="info-block">
+        <h4>Ship To</h4>
+        <p class="highlight">Same as Billing</p>
+        <p>
+          45, Green Park Colony<br>
+          New Delhi - 110016
+        </p>
+      </div>
+      <div class="info-block">
+        <h4>Invoice Details</h4>
+        <p>
+          <strong>Invoice Date:</strong> 21 Jan 2026<br>
+          <strong>Order ID:</strong> ORD-2026-00089<br>
+          <strong>Payment:</strong> <span class="badge badge-paid">PAID</span><br>
+          <strong>Payment Mode:</strong> Online (Razorpay)
+        </p>
+      </div>
+    </div>
+
+    <!-- Items Table -->
+    <div class="invoice-items">
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th style="width: 5%">#</th>
+            <th style="width: 35%">Item Description</th>
+            <th class="text-center" style="width: 8%">HSN</th>
+            <th class="text-center" style="width: 8%">Qty</th>
+            <th class="text-right" style="width: 12%">Rate</th>
+            <th class="text-right" style="width: 10%">Discount</th>
+            <th class="text-right" style="width: 12%">Taxable</th>
+            <th class="text-right" style="width: 10%">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>
+              <div class="item-name">22K Gold Chain - 15g</div>
+              <div class="item-desc">Purity: 22K (916) | Weight: 15.00g | Making: 12%</div>
+            </td>
+            <td class="text-center">7113</td>
+            <td class="text-center">1</td>
+            <td class="text-right">₹89,250</td>
+            <td class="text-right">₹4,463</td>
+            <td class="text-right">₹84,787</td>
+            <td class="text-right">₹99,861</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>
+              <div class="item-name">Diamond Pendant - 0.5ct</div>
+              <div class="item-desc">Clarity: VS1 | Color: F | Certification: IGI</div>
+            </td>
+            <td class="text-center">7113</td>
+            <td class="text-center">1</td>
+            <td class="text-right">₹45,000</td>
+            <td class="text-right">₹2,250</td>
+            <td class="text-right">₹42,750</td>
+            <td class="text-right">₹50,445</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>
+              <div class="item-name">Silver Anklet Pair - 50g</div>
+              <div class="item-desc">Purity: 925 Sterling | Weight: 50.00g</div>
+            </td>
+            <td class="text-center">7113</td>
+            <td class="text-center">1</td>
+            <td class="text-right">₹5,500</td>
+            <td class="text-right">₹275</td>
+            <td class="text-right">₹5,225</td>
+            <td class="text-right">₹6,165</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- GST Summary -->
+    <div class="gst-summary">
+      <div class="gst-summary-header">GST Summary</div>
+      <table class="gst-summary-table">
+        <thead>
+          <tr>
+            <th>Tax Type</th>
+            <th>Taxable Amount</th>
+            <th>Rate</th>
+            <th>Tax Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CGST</td>
+            <td>₹1,32,762</td>
+            <td>1.5%</td>
+            <td>₹1,991</td>
+          </tr>
+          <tr>
+            <td>SGST</td>
+            <td>₹1,32,762</td>
+            <td>1.5%</td>
+            <td>₹1,991</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3">Total Tax</td>
+            <td>₹3,982</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Summary -->
+    <div class="invoice-summary">
+      <div class="summary-notes">
+        <h4>Notes</h4>
+        <p>
+          Thank you for shopping with Gold Jewellers! Your satisfaction is our priority.
+          For any queries regarding this invoice, please contact our support team.
+        </p>
+      </div>
+      <div class="summary-totals">
+        <div class="summary-row">
+          <span class="label">Subtotal</span>
+          <span class="value">₹1,39,750</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Discount (5%)</span>
+          <span class="value">- ₹6,988</span>
+        </div>
+        <div class="summary-row subtotal">
+          <span class="label">Taxable Amount</span>
+          <span class="value">₹1,32,762</span>
+        </div>
+        <div class="summary-row tax-row">
+          <span class="label">CGST @ 1.5%</span>
+          <span class="value">₹1,991</span>
+        </div>
+        <div class="summary-row tax-row">
+          <span class="label">SGST @ 1.5%</span>
+          <span class="value">₹1,991</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Round Off</span>
+          <span class="value">₹0.29</span>
+        </div>
+        <div class="summary-row total">
+          <span class="label">Grand Total</span>
+          <span class="value">₹1,56,471</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Amount in Words -->
+    <div class="amount-words">
+      <span>Amount in Words</span>
+      <p>One Lakh Fifty Six Thousand Four Hundred Seventy One Rupees Only</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="invoice-footer">
+      <div class="payment-info">
+        <h4>Payment Information</h4>
+        <p>
+          <strong>Bank:</strong> HDFC Bank<br>
+          <strong>Account:</strong> Gold Jewellers Pvt Ltd<br>
+          <strong>A/C No:</strong> 50100123456789<br>
+          <strong>IFSC:</strong> HDFC0001234<br>
+          <strong>Branch:</strong> MG Road, Mumbai
+        </p>
+      </div>
+      <div class="signature">
+        <h4>Authorized Signatory</h4>
+        <div class="signature-line"></div>
+        <p>For Gold Jewellers Pvt Ltd</p>
+      </div>
+    </div>
+
+    <!-- Terms -->
+    <div class="invoice-terms">
+      <h4>Terms & Conditions</h4>
+      <ol>
+        <li>Goods once sold will not be taken back or exchanged.</li>
+        <li>All disputes are subject to Mumbai jurisdiction only.</li>
+        <li>E. & O.E. (Errors and Omissions Excepted)</li>
+        <li>This is a computer generated invoice and does not require physical signature.</li>
+        <li>Hallmark certification as per BIS standards is applicable for gold jewellery.</li>
+      </ol>
+    </div>
+  </div>
+</body>
+</html>

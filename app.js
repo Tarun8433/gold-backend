@@ -23,6 +23,11 @@ import paymentRoutes from './routes/payment.js';
 import vouchersRoutes from './routes/vouchers.js';
 import bannersRoutes from './routes/banners.js';
 import adminRoutes from './routes/admin.js';
+import packagesRoutes from './routes/packages.js';
+import referralsRoutes from './routes/referrals.js';
+import loyaltyRoutes from './routes/loyalty.js';
+import membershipRoutes from './routes/membership.js';
+import billsRoutes from './routes/bills.js';
 
 // Replicate __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -66,6 +71,7 @@ app.use(flash());
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Define Routes
 app.get('/', (req, res) => res.send('API Running'));
@@ -86,6 +92,11 @@ app.use('/api/vouchers', vouchersRoutes);
 app.use('/api/banners', bannersRoutes);
 app.use('/api/admin/banners', bannersRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/packages', packagesRoutes);
+app.use('/api/referrals', referralsRoutes);
+app.use('/api/loyalty', loyaltyRoutes);
+app.use('/api/membership', membershipRoutes);
+app.use('/api/bills', billsRoutes);
 
 const PORT = process.env.PORT || 5000;
 

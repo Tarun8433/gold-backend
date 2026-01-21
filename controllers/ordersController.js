@@ -25,7 +25,8 @@ const getOrders = async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user._id })
       .sort({ createdAt: -1 })
-      .populate('items.product', 'name price makingCharges images');
+      .populate('items.product', 'name price makingCharges images')
+      .populate('bill', 'invoiceNumber invoiceDate billingType grandTotal status pdfUrl');
     res.json(orders);
   } catch (error) {
     console.error(error);
@@ -38,7 +39,9 @@ const getOrderById = async (req, res) => {
     const order = await Order.findOne({
       _id: req.params.id,
       user: req.user._id,
-    }).populate('items.product', 'name price makingCharges images');
+    })
+      .populate('items.product', 'name price makingCharges images')
+      .populate('bill', 'invoiceNumber invoiceDate billingType grandTotal status pdfUrl');
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });

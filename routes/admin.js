@@ -27,6 +27,31 @@ import {
   updateCustomerPaymentSettings,
   bulkUpdatePaymentSettings,
 } from '../controllers/adminController.js';
+import {
+  getAdminPackages,
+  createPackage,
+  updatePackage,
+  deletePackage,
+  getAdminPurchases,
+} from '../controllers/packageController.js';
+import { getAdminReferrals } from '../controllers/referralController.js';
+import {
+  getAdminLoyaltyTransactions,
+  adjustLoyaltyPoints,
+} from '../controllers/loyaltyController.js';
+import {
+  getSettings,
+  getSettingByKey,
+  updateSettings,
+  updateSetting,
+  seedSettings,
+} from '../controllers/settingsController.js';
+import {
+  generateBill,
+  getAllBills,
+  cancelBill,
+  regenerateBillPDF,
+} from '../controllers/billController.js';
 
 const router = express.Router();
 
@@ -93,6 +118,45 @@ router
   .get(protect, admin, getAdminCustomerById);
 
 router.put('/customers/:id/payment-settings', protect, admin, updateCustomerPaymentSettings);
+
+// Packages
+router
+  .route('/packages')
+  .get(protect, admin, getAdminPackages)
+  .post(protect, admin, createPackage);
+
+router
+  .route('/packages/:id')
+  .put(protect, admin, updatePackage)
+  .delete(protect, admin, deletePackage);
+
+router.get('/packages/purchases', protect, admin, getAdminPurchases);
+
+// Referrals
+router.get('/referrals', protect, admin, getAdminReferrals);
+
+// Loyalty
+router.get('/loyalty/transactions', protect, admin, getAdminLoyaltyTransactions);
+router.post('/loyalty/adjust', protect, admin, adjustLoyaltyPoints);
+
+// Settings
+router
+  .route('/settings')
+  .get(protect, admin, getSettings)
+  .put(protect, admin, updateSettings);
+
+router.post('/settings/seed', protect, admin, seedSettings);
+
+router
+  .route('/settings/:key')
+  .get(protect, admin, getSettingByKey)
+  .put(protect, admin, updateSetting);
+
+// Bills
+router.get('/bills', protect, admin, getAllBills);
+router.post('/bills/generate', protect, admin, generateBill);
+router.put('/bills/:id/cancel', protect, admin, cancelBill);
+router.post('/bills/:id/regenerate', protect, admin, regenerateBillPDF);
 
 export default router;
 

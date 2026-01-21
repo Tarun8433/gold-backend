@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 12px;
+      color: #333;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .invoice-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Header Section */
+    .invoice-header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff;
+      padding: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .company-info h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #d4af37;
+      margin-bottom: 8px;
+    }
+
+    .company-info p {
+      font-size: 11px;
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    .invoice-title {
+      text-align: right;
+    }
+
+    .invoice-title h2 {
+      font-size: 32px;
+      font-weight: 300;
+      letter-spacing: 4px;
+      margin-bottom: 10px;
+    }
+
+    .invoice-title .invoice-number {
+      background: #d4af37;
+      color: #1a1a2e;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 14px;
+      display: inline-block;
+    }
+
+    /* Info Section */
+    .invoice-info {
+      display: flex;
+      padding: 25px 30px;
+      background: #fafafa;
+      border-bottom: 1px solid #eee;
+    }
+
+    .info-block {
+      flex: 1;
+    }
+
+    .info-block:last-child {
+      text-align: right;
+    }
+
+    .info-block h4 {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .info-block p {
+      line-height: 1.7;
+      color: #444;
+    }
+
+    .info-block .highlight {
+      font-weight: 600;
+      color: #1a1a2e;
+      font-size: 13px;
+    }
+
+    /* Items Table */
+    .invoice-items {
+      padding: 0 30px;
+    }
+
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    .items-table thead {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    .items-table th {
+      padding: 12px 15px;
+      text-align: left;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .items-table th:last-child,
+    .items-table th.text-right {
+      text-align: right;
+    }
+
+    .items-table th.text-center {
+      text-align: center;
+    }
+
+    .items-table td {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+    }
+
+    .items-table td:last-child {
+      text-align: right;
+    }
+
+    .items-table td.text-center {
+      text-align: center;
+    }
+
+    .items-table td.text-right {
+      text-align: right;
+    }
+
+    .item-name {
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    .item-desc {
+      font-size: 11px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    /* Summary Section */
+    .invoice-summary {
+      display: flex;
+      padding: 20px 30px;
+      background: #fafafa;
+    }
+
+    .summary-notes {
+      flex: 1;
+      padding-right: 30px;
+    }
+
+    .summary-notes h4 {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .summary-notes p {
+      font-size: 11px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .summary-totals {
+      width: 250px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .summary-row .label {
+      color: #666;
+    }
+
+    .summary-row .value {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .summary-row.total {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 15px;
+      margin: 15px -15px -15px;
+      border-bottom: none;
+    }
+
+    .summary-row.total .label {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .summary-row.total .value {
+      color: #d4af37;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    /* Amount in Words */
+    .amount-words {
+      padding: 15px 30px;
+      background: #fff8e7;
+      border-left: 4px solid #d4af37;
+      margin: 0 30px 20px;
+    }
+
+    .amount-words span {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+    }
+
+    .amount-words p {
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-top: 4px;
+    }
+
+    /* Footer */
+    .invoice-footer {
+      padding: 25px 30px;
+      display: flex;
+      justify-content: space-between;
+      border-top: 2px solid #1a1a2e;
+    }
+
+    .payment-info h4,
+    .signature h4 {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .payment-info p {
+      font-size: 11px;
+      color: #444;
+      line-height: 1.8;
+    }
+
+    .signature {
+      text-align: right;
+    }
+
+    .signature-line {
+      width: 180px;
+      height: 60px;
+      border-bottom: 1px solid #333;
+      margin-left: auto;
+      margin-bottom: 8px;
+    }
+
+    .signature p {
+      font-size: 11px;
+      color: #666;
+    }
+
+    /* Terms */
+    .invoice-terms {
+      padding: 20px 30px;
+      background: #fafafa;
+      border-top: 1px solid #eee;
+    }
+
+    .invoice-terms h4 {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .invoice-terms ol {
+      padding-left: 15px;
+      font-size: 10px;
+      color: #666;
+      line-height: 1.8;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 3px;
+    }
+
+    .badge-paid {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .no-gst-notice {
+      background: #e7f3ff;
+      border-left: 4px solid #0066cc;
+      padding: 12px 20px;
+      margin: 0 30px 20px;
+      font-size: 11px;
+      color: #0066cc;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .invoice-container {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice-container">
+    <!-- Header -->
+    <div class="invoice-header">
+      <div class="company-info">
+        <h1>GOLD JEWELLERS</h1>
+        <p>
+          123, Jewellery Market, MG Road<br>
+          Mumbai, Maharashtra - 400001<br>
+          Phone: +91 98765 43210<br>
+          Email: info@goldjewellers.com
+        </p>
+      </div>
+      <div class="invoice-title">
+        <h2>INVOICE</h2>
+        <div class="invoice-number">INV-2026-00143</div>
+      </div>
+    </div>
+
+    <!-- Invoice Info -->
+    <div class="invoice-info">
+      <div class="info-block">
+        <h4>Bill To</h4>
+        <p class="highlight">Priya Sharma</p>
+        <p>
+          22, Lake View Apartments<br>
+          Bangalore - 560001<br>
+          Phone: +91 88776 55443
+        </p>
+      </div>
+      <div class="info-block">
+        <h4>Ship To</h4>
+        <p class="highlight">Same as Billing</p>
+        <p>
+          22, Lake View Apartments<br>
+          Bangalore - 560001
+        </p>
+      </div>
+      <div class="info-block">
+        <h4>Invoice Details</h4>
+        <p>
+          <strong>Invoice Date:</strong> 21 Jan 2026<br>
+          <strong>Order ID:</strong> ORD-2026-00090<br>
+          <strong>Payment:</strong> <span class="badge badge-paid">PAID</span><br>
+          <strong>Payment Mode:</strong> Cash
+        </p>
+      </div>
+    </div>
+
+    <!-- No GST Notice -->
+    <div class="no-gst-notice">
+      <strong>Note:</strong> This is a non-GST invoice. No tax has been charged on this transaction.
+    </div>
+
+    <!-- Items Table -->
+    <div class="invoice-items">
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th style="width: 5%">#</th>
+            <th style="width: 45%">Item Description</th>
+            <th class="text-center" style="width: 10%">Qty</th>
+            <th class="text-right" style="width: 15%">Unit Price</th>
+            <th class="text-right" style="width: 10%">Discount</th>
+            <th class="text-right" style="width: 15%">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>
+              <div class="item-name">22K Gold Earrings - 8g</div>
+              <div class="item-desc">Purity: 22K (916) | Weight: 8.00g | Design: Traditional</div>
+            </td>
+            <td class="text-center">1</td>
+            <td class="text-right">₹47,600</td>
+            <td class="text-right">₹2,380</td>
+            <td class="text-right">₹45,220</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>
+              <div class="item-name">Silver Bracelet - 25g</div>
+              <div class="item-desc">Purity: 925 Sterling | Weight: 25.00g</div>
+            </td>
+            <td class="text-center">1</td>
+            <td class="text-right">₹2,750</td>
+            <td class="text-right">₹138</td>
+            <td class="text-right">₹2,612</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Summary -->
+    <div class="invoice-summary">
+      <div class="summary-notes">
+        <h4>Notes</h4>
+        <p>
+          Thank you for your purchase! We appreciate your business.
+          For any queries, please contact our customer support.
+        </p>
+      </div>
+      <div class="summary-totals">
+        <div class="summary-row">
+          <span class="label">Subtotal</span>
+          <span class="value">₹50,350</span>
+        </div>
+        <div class="summary-row">
+          <span class="label">Discount (5%)</span>
+          <span class="value">- ₹2,518</span>
+        </div>
+        <div class="summary-row total">
+          <span class="label">Grand Total</span>
+          <span class="value">₹47,832</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Amount in Words -->
+    <div class="amount-words">
+      <span>Amount in Words</span>
+      <p>Forty Seven Thousand Eight Hundred Thirty Two Rupees Only</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="invoice-footer">
+      <div class="payment-info">
+        <h4>Contact Us</h4>
+        <p>
+          <strong>Phone:</strong> +91 98765 43210<br>
+          <strong>Email:</strong> support@goldjewellers.com<br>
+          <strong>Website:</strong> www.goldjewellers.com<br>
+          <strong>Store Hours:</strong> 10 AM - 9 PM (All Days)
+        </p>
+      </div>
+      <div class="signature">
+        <h4>Authorized Signatory</h4>
+        <div class="signature-line"></div>
+        <p>For Gold Jewellers</p>
+      </div>
+    </div>
+
+    <!-- Terms -->
+    <div class="invoice-terms">
+      <h4>Terms & Conditions</h4>
+      <ol>
+        <li>Goods once sold will not be taken back or exchanged.</li>
+        <li>All disputes are subject to Mumbai jurisdiction only.</li>
+        <li>This is a computer generated invoice.</li>
+        <li>Please retain this invoice for warranty claims.</li>
+      </ol>
+    </div>
+  </div>
+</body>
+</html>

@@ -471,7 +471,8 @@ const getAdminOrders = async (req, res) => {
     const orders = await Order.find(filter)
       .sort({ createdAt: -1 })
       .populate('user', 'name email phone')
-      .populate('items.product', 'name price makingCharges images');
+      .populate('items.product', 'name price makingCharges images')
+      .populate('bill', 'invoiceNumber invoiceDate billingType grandTotal status pdfUrl');
 
     res.json(orders);
   } catch (error) {
@@ -487,7 +488,8 @@ const getAdminOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
       .populate('user', 'name email phone')
-      .populate('items.product', 'name price makingCharges images');
+      .populate('items.product', 'name price makingCharges images')
+      .populate('bill', 'invoiceNumber invoiceDate billingType grandTotal status pdfUrl');
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });

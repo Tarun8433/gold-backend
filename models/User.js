@@ -87,6 +87,31 @@ const PaymentSettingsSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const MembershipSchema = new mongoose.Schema(
+  {
+    status: {
+      type: String,
+      enum: ['inactive', 'active', 'expired'],
+      default: 'inactive',
+    },
+    activatedAt: {
+      type: Date,
+    },
+    expiresAt: {
+      type: Date,
+    },
+    discountPercent: {
+      type: Number,
+      default: 20,
+    },
+    packageId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Package',
+    },
+  },
+  { _id: false }
+);
+
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -126,6 +151,27 @@ const UserSchema = new mongoose.Schema({
     type: PaymentSettingsSchema,
     default: () => ({}),
   },
+  membership: {
+    type: MembershipSchema,
+    default: () => ({ status: 'inactive' }),
+  },
+  referralCode: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  referredBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  referredByCode: {
+    type: String,
+  },
+  loyaltyPoints: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
 });
 
 // Validate that at least email or phone is provided
@@ -147,6 +193,64 @@ UserSchema.pre('save', async function () {
 // Match user entered password to hashed password in database
 UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Generate unique referral code
+UserSchema.methods.generateReferralCode = async function () {
+  if (this.referralCode) {
+    return this.referralCode;
+  }
+
+  const namePart = this.name
+    .replace(/[^a-zA-Z]/g, '')
+    .substring(0, 3)
+    .toUpperCase();
+
+  let code;
+  let isUnique = false;
+
+  while (!isUnique) {
+    const randomHex = Math.random().toString(16).substring(2, 7).toUpperCase();
+    code = `${namePart}${randomHex}`.substring(0, 8);
+
+    const existing = await mongoose.model('User').findOne({ referralCode: code });
+    if (!existing) {
+      isUnique = true;
+    }
+  }
+
+  this.referralCode = code;
+  await this.save();
+  return code;
+};
+
+// Check if membership is active
+UserSchema.methods.isMembershipActive = function () {
+  if (!this.membership || this.membership.status !== 'active') {
+    return false;
+  }
+  if (this.membership.expiresAt && new Date() > this.membership.expiresAt) {
+    return false;
+  }
+  return true;
+};
+
+// Get membership discount
+UserSchema.methods.getMembershipDiscount = function () {
+  if (!this.isMembershipActive()) {
+    return 0;
+  }
+  return this.membership.discountPercent || 20;
+};
+
+// Update membership status based on expiry
+UserSchema.methods.updateMembershipStatus = async function () {
+  if (this.membership && this.membership.status === 'active') {
+    if (this.membership.expiresAt && new Date() > this.membership.expiresAt) {
+      this.membership.status = 'expired';
+      await this.save();
+    }
+  }
 };
 
 export default mongoose.model('User', UserSchema);

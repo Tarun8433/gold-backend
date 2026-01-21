@@ -26,6 +26,8 @@
     "mongo-sanitize": "^1.1.0",
     "mongoose": "^9.1.2",
     "multer": "^2.0.2",
+    "puppeteer": "^24.35.0",
+    "razorpay": "^2.9.6",
     "zod": "^4.3.5"
   },
   "devDependencies": {
